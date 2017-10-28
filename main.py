@@ -14,6 +14,8 @@ class HopfieldNetwok:
         self.m = 3
         self.test_images = np.zeros((self.m, 10, 10))
         self.test_dir = "original/"
+        self.rec_dir = "noized/"
+        self.out_dir = "res/"
 
     def load_test_images(self):
         for _, _, files in os.walk(self.test_dir):
@@ -27,6 +29,12 @@ class HopfieldNetwok:
                             self.test_images[i, y, x] = -1
                 i += 1
 
+    def activate(self, x):
+        if x > 0:
+            return 1
+        else:
+            return -1
+
     def train(self):
         for i in range(0, self.n):
             for j in range(i + 1, self.n):
@@ -38,10 +46,43 @@ class HopfieldNetwok:
                 self.weights[i, j] = s
                 self.weights[j, i] = self.weights[i, j]
 
+    def play(self, image):
+        neurons_t = np.array(image.ravel())
+        neurons_t1 = np.zeros(self.n)
+
+        while True:
+            for i in range(0, self.n):
+                value = 0
+                for j in range(0, self.n):
+                    value += self.weights[i][j] * neurons_t[j]
+                neurons_t1[i] = self.activate(value)
+
+            converged = False
+            for i in range(0, self.n):
+                if neurons_t[i] != neurons_t1[i]:
+                    converged = True
+                    break
+            if converged:
+                break
+            neurons_t = neurons_t1
+
+        res = np.zeros((10, 10))
+        for i in range(0, 10):
+            for j in range(0, 10):
+                res[i, j] = neurons_t1[10 * i + j]
+        return res
+
+    def recognize(self):
+        for _, _, files in os.walk(self.rec_dir):
+            for _file in files:
+                f = mpimg.imread(self.rec_dir + _file)[:, :, 0]
+                mpimg.imsave(self.out_dir + _file, self.play(f))
+
     def run(self):
         self.load_test_images()
         self.train()
-        print(self.weights)
+        #  print(self.weights)
+        self.recognize()
 
 
 net = HopfieldNetwok()
