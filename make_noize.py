@@ -33,7 +33,10 @@ class Noizer:
                 for x in range(0, width):
                     val = random.uniform(0.0, 1.0)
                     if val <= level / 100:
-                        image[y][x] = 0.0
+                        if image[y][x][0] > 0:
+                            image[y][x] = 0.0
+                        else:
+                            image[y][x] = 1.0
             mpimg.imsave(self.dst_dir + name, image)
 
     def run(self):

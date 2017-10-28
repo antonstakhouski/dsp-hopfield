@@ -51,6 +51,8 @@ class HopfieldNetwok:
         neurons_t = np.array(image.ravel())
         neurons_t1 = np.zeros(self.n)
 
+        count = 10
+
         while True:
             for i in range(0, self.n):
                 value = 0
@@ -58,12 +60,15 @@ class HopfieldNetwok:
                     value += self.weights[i][j] * neurons_t[j]
                 neurons_t1[i] = self.activate(value)
 
-            converged = False
+            converged = True
             for i in range(0, self.n):
                 if neurons_t[i] != neurons_t1[i]:
-                    converged = True
+                    converged = False
                     break
             if converged:
+                count -= 1
+
+            if count == 0:
                 break
             neurons_t = neurons_t1
 
