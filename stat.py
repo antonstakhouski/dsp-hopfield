@@ -13,12 +13,12 @@ class Analyz:
             orig = mpimg.imread(self.src_dir + letter + ".png")[:, :, 0]
             for lvl in self.noize_levels:
                 counter = 0
-                for i in range(0, 10):
+                for i in range(0, 100):
                     res = mpimg.imread(self.dst_dir + letter +
                                        str(lvl) + "_" + str(i) + ".png")[:, :, 0]
                     if (orig == res).all():
                         counter += 1
-                print("{} at {} noize level: {}%".format(letter, lvl, counter * 10))
+                print("{} at {} noize level: {}%".format(letter, lvl, counter))
                 pass
             print("-------")
 
