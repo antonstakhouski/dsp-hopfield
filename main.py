@@ -7,12 +7,13 @@ import matplotlib.image as mpimg
 
 class HopfieldNetwok:
     def __init__(self):
-        self.n = 100
+        self.side = 10
+        self.n = self.side ** 2
         self.entry_layer = np.zeros(self.n)
         self.neurons = np.zeros(self.n)
         self.weights = np.zeros((self.n, self.n))
         self.m = 3
-        self.test_images = np.zeros((self.m, 10, 10))
+        self.test_images = np.zeros((self.m, self.side, self.side))
         self.test_dir = "original/"
         self.rec_dir = "noized/"
         self.out_dir = "res/"
@@ -23,8 +24,8 @@ class HopfieldNetwok:
             for _file in files:
                 f = mpimg.imread(self.test_dir + _file)[:, :, 0]
                 self.test_images[i] = f
-                for y in range(0, 10):
-                    for x in range(0, 10):
+                for y in range(0, self.side):
+                    for x in range(0, self.side):
                         if self.test_images[i, y, x] == 0:
                             self.test_images[i, y, x] = -1
                 i += 1
@@ -66,10 +67,13 @@ class HopfieldNetwok:
                 break
             neurons_t = neurons_t1
 
-        res = np.zeros((10, 10))
-        for i in range(0, 10):
-            for j in range(0, 10):
-                res[i, j] = neurons_t1[10 * i + j]
+        res = np.zeros((self.side, self.side, 3))
+        for i in range(0, self.side):
+            for j in range(0, self.side):
+                value = neurons_t1[self.side * i + j]
+                if value < 0:
+                    value = 0
+                res[i, j] = value
         return res
 
     def recognize(self):
@@ -81,7 +85,6 @@ class HopfieldNetwok:
     def run(self):
         self.load_test_images()
         self.train()
-        #  print(self.weights)
         self.recognize()
 
 

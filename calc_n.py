@@ -2,5 +2,5 @@
 
 import math
 
-n = 22
+n = 100
 print(n / (2 * math.log(n) + math.log(math.log(n))))
