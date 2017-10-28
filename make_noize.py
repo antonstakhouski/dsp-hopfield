@@ -11,6 +11,7 @@ class Noizer:
         self.dst_dir = "noized/"
         self.noize_levels = [10, 20, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100]
         self.orig_images = []
+        self.num_samples = 10
 
     def open_images(self):
         for root, dirs, files in os.walk(self.src_dir):
@@ -23,23 +24,22 @@ class Noizer:
             self.add_noize_lvl(pic, lvl)
 
     def add_noize_lvl(self, pic, level):
-        image = pic[0].copy()
-        name = pic[1]
-        name.replace(".png", str(level) + ".png")
-        width, height, _ = image.shape
-        for y in range(0, height):
-            for x in range(0, width):
-                val = random.uniform(0.0, 1.0)
-                if val <= level / 100:
-                    image[y][x] = 1.0
-        mpimg.imsave(self.dst_dir + name, image)
+        for i in range(0, self.num_samples):
+            image = pic[0].copy()
+            name = pic[1]
+            name = name.replace(".png", str(level) + "_" + str(i) + ".png")
+            width, height, _ = image.shape
+            for y in range(0, height):
+                for x in range(0, width):
+                    val = random.uniform(0.0, 1.0)
+                    if val <= level / 100:
+                        image[y][x] = 0.0
+            mpimg.imsave(self.dst_dir + name, image)
 
     def run(self):
         self.open_images()
         for pic in self.orig_images:
             self.add_noize(pic)
-        #  print(self.orig_images[0][0])
-        pass
 
 
 noizer = Noizer()
